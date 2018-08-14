@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.GaoGuanYDKaoHeMapper">
+    <insert id="insert" parameterType="GaoGuanYDKaoHe">
+    	insert into gaoguanydkaohe(userId, userName, dutyId, yearMonth, score) 
+    	                 values(#{userId}, #{userName},#{dutyId},#{yearMonth},#{score})
+    </insert>
+    
+	<select id="selectByDutyAndYearMonth" parameterType="GaoGuanYDKaoHe" resultType="GaoGuanYDKaoHe">
+    	select *, j.rank as rank, j.level as level from user as i left join gaoguanydkaohe as j on i.userId = j.userId and yearMonth=#{yearMonth}
+    	where i.dutyId=#{dutyId}
+    </select>
+    <update id="updateByUserIdAndYearMonth" parameterType="GaoGuanYDKaoHe">
+    	update gaoguanydkaohe set score=#{score}
+    	where userId=#{userId} and yearMonth=#{yearMonth}
+    </update>
+</mapper>

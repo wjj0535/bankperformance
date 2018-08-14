@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.YueDuKaoHeMapper">
+    <insert id="insert" parameterType="YueDuKaoHe">
+    	insert into yuedukaohe(userId, insId, dutyId, yearMonth, cunKuan, daiKuan, buLiangDaiKuan,other,zongLiang, score) 
+    	values(#{userId}, #{insId}, #{dutyId},#{yearMonth},#{cunKuan},#{daiKuan},#{buLiangDaiKuan},#{other},#{zongLiang},#{score})
+    </insert>
+    <select id="selectByUserIdAndDate" parameterType="YueDuKaoHe" resultType="YueDuKaoHe">
+    	select * from yuedukaohe where userId=#{userId} and yearMonth=#{yearMonth}
+    </select>
+     <select id="selectByDateAndInsAndDuty" parameterType="YueDuKaoHe" resultType="YueDuKaoHe">
+    	select u.*, i.insName, n.cunKuan as cunKuan, n.daiKuan as daiKuan, n.buLiangDaiKuan as buLiangDaiKuan, n.other as other, n.zongLiang as zongLiang
+    	from user as u 
+    	left join yuedukaohe as n on u.userId=n.userId  and n.yearMonth=#{yearMonth}
+    	left join institution as i on i.insId=u.insId
+    	where u.isDefault!='1' and u.dutyId=#{dutyId} and u.insId=#{insId}
+    </select>
+    <select id="selectByDateAndXulie" parameterType="YueDuKaoHe" resultType="YueDuKaoHe">
+    	select u.*, i.insName, n.zongLiang as zongLiang, n.score as score, n.rank as rank, n.level as level, n.jiangJin as jiangJin, j.fpxs as jgFpxs, j.insName as insName
+    	from user as u 
+    	left join duty as d on u.dutyId=d.id
+    	left join yuedukaohe as n on u.userId=n.userId 
+    	left join jigouydkaohe as j on u.insId=j.insId and n.yearMonth=#{yearMonth}
+    	left join institution as i on i.insId=u.insId
+    	where u.isDefault!='1' and d.xulieId=#{xulieId} 
+    	order by score desc
+    </select>
+    <select id="selectByDutyIdAndYearMonth" parameterType="YueDuKaoHe" resultType="YueDuKaoHe">
+    	select u.*, i.insName, n.cunKuan as cunKuan, n.daiKuan as daiKuan, n.buLiangDaiKuan as buLiangDaiKuan, n.other as other, n.zongLiang as zongLiang, n.score as score, n.rank as rank, n.level as level, n.jiangJin as jiangJin
+    	from user as u 
+    	left join duty as d on u.dutyId=d.id
+    	left join yuedukaohe as n on u.userId=n.userId and n.yearMonth=#{yearMonth} 
+    	left join institution as i on i.insId=u.insId
+    	where u.isDefault!='1' and d.id=#{dutyId} 
+    	order by score desc
+    </select>
+    <select id="selectTotalByDutyIdAndYear" resultType="TotalZL">
+    	select userId, sum(zongLiang) as zongLiang from yuedukaohe where dutyId=#{dutyId} and yearMonth like #{likeCondition} group by userId
+    </select>
+    <select id="selectTotalByUserIdAndYear" resultType="TotalZL">
+    	select userId, sum(zongLiang) as zongLiang from yuedukaohe where userId=#{userId} and yearMonth like #{likeCondition}
+    </select>
+    <select id="selectByUserIdAndYear" parameterType="java.util.Map" resultType="YueDuKaoHe">
+    	select * from yuedukaohe  where userId=#{userId} and yearMonth like #{likeCondition}
+    </select>
+    
+    <update id="updateByUserIdAndDate" parameterType="YueDuKaoHe">
+    	update yuedukaohe set cunKuan=#{cunKuan}, daiKuan=#{daiKuan}, buLiangDaiKuan=#{buLiangDaiKuan}, other=#{other}, zongLiang=#{zongLiang}
+    	,score=#{score}
+    	where userId=#{userId} and yearMonth=#{yearMonth}
+    </update>
+    <update id="updateScoreByUserIdAndDate" parameterType="YueDuKaoHe">
+    	update yuedukaohe set score=#{score} where userId=#{userId} and yearMonth=#{yearMonth}
+    </update>
+    <update id="updateKhjgByUserIdAndDate" parameterType="YueDuKaoHe">
+    	update yuedukaohe set rank=#{rank}, level=#{level}, jiangJin=#{jiangJin} where userId=#{userId} and yearMonth=#{yearMonth}
+    </update>
+</mapper>

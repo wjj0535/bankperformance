@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<script src="./jquery-easyui-1.5.4.4/jquery.min.js"	type="text/javascript"></script>
+<script src="./jquery-easyui-1.5.4.4/jquery.easyui.min.js"	type="text/javascript"></script>
+<script src="./jquery-easyui-1.5.4.4/locale/easyui-lang-zh_CN.js"	type="text/javascript"></script>
+<script src="./js/json2.js"></script>
+<script src="./js/global.js"></script>
+<link href="./jquery-easyui-1.5.4.4/themes/default/easyui.css"	rel="stylesheet" type="text/css" />
+<link href="./jquery-easyui-1.5.4.4/themes/icon.css" rel="stylesheet"	type="text/css" />
+<link href="./css/system.css" rel="stylesheet"	type="text/css" />
+<style>
+.head{height: 40px; background: RGB(30, 64, 128); padding: 15px 0px 10px 20px; line-height:26px;color:white;font-size:28px;font-weight: bold;}
+
+</style>
+<script>
+var param = document.URL.split("?")[1];
+$(function() {      
+    $('#datetime').datebox({    
+          onShowPanel : function() {// 显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层    
+              span.trigger('click'); // 触发click事件弹出月份层    
+              $(".datebox-button-a").first().hide();
+              if (!tds)    
+                  setTimeout(function() {// 延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔    
+                      tds = p.find('div.calendar-menu-month-inner td');    
+                      tds.click(function(e) {    
+                          e.stopPropagation(); // 禁止冒泡执行easyui给月份绑定的事件    
+                          var year = /\d{4}/.exec(span.html())[0]// 得到年份    
+                          , month = parseInt($(this).attr('abbr'), 10) + 1; // 月份    
+                          $('#datetime').datebox('hidePanel')// 隐藏日期对象    
+                          .datebox('setValue', year + '-' + month); // 设置日期的值    
+                      });    
+                  }, 0);    
+          },    
+          parser : function(s) {// 配置parser，返回选择的日期    
+              if (!s)    
+                  return new Date();    
+              var arr = s.split('-');    
+              return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);    
+          },    
+          formatter : function(d) {    
+              var month = d.getMonth();  
+              if(month<=10){  
+                  month = "0"+month;  
+              }  
+              if (d.getMonth() == 0) {    
+                  return d.getFullYear()-1 + '-' + 12;    
+              } else {    
+                  return d.getFullYear() + '-' + month;    
+              }    
+          }// 配置formatter，只返回年月    
+      });    
+      var p = $('#datetime').datebox('panel'), // 日期选择对象    
+      tds = false, // 日期选择对象中月份    
+      span = p.find('span.calendar-text'); // 显示月份层的触发控件    
+      
+  });
+$(document).ready(function() {
+	var info = getHtmlNameById(param);
+	$("#title").text("绩效考核-"+info.title);
+	var tableData;
+	var merges ;
+	$.ajax({
+		url:'data/employee.json',
+		type:'get',
+		async:false,
+		success:function(data){
+			tableData = data.data;
+			merges = data.merges;
+		}
+	});
+	$('#showTable').datagrid({
+		data:tableData,
+		onLoadSuccess:function(){
+			for(var i=0; i<merges.length; i++)
+				$('#showTable').datagrid('mergeCells',{
+					index:merges[i].index,
+					field:'checkpartion',
+					rowspan:merges[i].rowspan
+				});
+			$("table tr:gt(1)").each(function() {    // 遍历每一行
+			    $(this).children("td:first").css("background-color", "RGB(248,248,248)"); 
+			    $(this).children("td:first").children().css("font-size", "14px"); 
+			    $(this).children("td:first").children().css("color", "blue"); 
+			});
+		}
+	});
+});
+</script>
+</head>
+<body>
+	<h3 id="title"></h3>
+	<div style="margin:20px 0 10px 0;"></div>
+	<div class="easyui-tabs" style="width:100%">
+		<div title="月度考核" style="padding: 10px">
+			<div style="margin:10px 2px"><label for="datetime">月份：</label><input type="text" id="datetime" class="easyui-datebox"
+				data-options="today:false"></div>
+			<table class="easyui-datagrid" id="showTable"
+				data-options="singleSelect:true">  
+<!-- 				,url:'data/griddata.json',method:'get' -->
+				<thead>
+					<tr>
+						<th data-options="field:'checkpartion',width:120,align:'center'"
+							rowspan="2">考核分区</th>
+						<th data-options="field:'name',width:120,align:'center'"
+							rowspan="2">姓名</th>
+						<th colspan="3">考核项目</th>
+						<th data-options="field:'completepercent',width:120,align:'center'"
+							rowspan="2">计划完成比</th>
+						<th data-options="field:'rank',width:120,align:'center'"
+							rowspan="2">排名</th>
+						<th data-options="field:'bonus',width:120,align:'center'"
+							rowspan="2">奖金</th>
+					</tr>
+					<tr>
+						<th data-options="field:'deposit',width:200,align:'center'">存款</th>
+						<th data-options="field:'businessvolume',width:200,align:'center'">业务量</th>
+						<th data-options="field:'othervolume',width:250,align:'center'">其他当量</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<div title="年度考核" style="padding:10px">
+			<ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
+		</div>
+	</div>
+</body>
+</html>

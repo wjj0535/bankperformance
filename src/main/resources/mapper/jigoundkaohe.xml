@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.JiGouNDKaoHeMapper">
+    <insert id="insert" parameterType="JiGouNDKaoHe">
+    	insert into JiGouNDKaoHe(insId, insName, year, score) 
+    	                 values(#{insId}, #{insName},#{year},#{score})
+    </insert>
+    <select id="selectByInsIdAndYear" parameterType="JiGouNDKaoHe" resultType="JiGouNDKaoHe">
+    	select * from institution as i left join JiGouNDKaoHe as j on i.insId = j.insId and year=#{year}
+    	where i.insId=#{insId} and i.isYuanjiao=#{isYuanJiao}
+    </select>
+	<select id="selectByTypeAndYear" parameterType="JiGouNDKaoHe" resultType="JiGouNDKaoHe">
+    	select * from institution as i left join JiGouNDKaoHe as j on i.insId = j.insId and year=#{year}
+    	where i.isYuanjiao=#{isYuanJiao} order by score desc
+    </select>
+    <update id="updateByInsIdAndYearMonth" parameterType="JiGouNDKaoHe">
+    	update JiGouNDKaoHe set score=#{score}
+    	where insId=#{insId} and year=#{year}
+    </update>
+    <update id="updateKhjgByInsIdAndYear" parameterType="JiGouNDKaoHe">
+    	update JiGouNDKaoHe set rank=#{rank}, level=#{level}, fpxs=#{fpxs}
+    	where insId=#{insId} and year=#{year}
+    </update>
+    <delete id="deleteByInsIdAndYear" parameterType="JiGouNDKaoHe">
+    	delete from JiGouNDKaoHe where  insId=#{insId} and year=#{year}
+    </delete>
+</mapper>

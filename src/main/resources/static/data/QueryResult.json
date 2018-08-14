@@ -1,0 +1,165 @@
+{
+	"merges": [{
+		"index": 0,
+		"khfq": "A+",
+		"rowspan": 2
+	}, {
+		"index": 2,
+		"khfq": "A",
+		"rowspan": 3
+	}, {
+		"index": 5,
+		"khfq": "B+",
+		"rowspan": 3
+	}, {
+		"index": 8,
+		"khfq": "B",
+		"rowspan": 5
+	}, {
+		"index": 13,
+		"khfq": "C",
+		"rowspan": 2
+	}
+	],
+	"data": {
+		"total": 15,
+		"rows": [{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "A+",
+				"fpxs": "100",
+				"xc": "1000"
+			},
+			{
+				"xm":"张思",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "A+",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "A",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "A",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "A",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B+",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B+",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B+",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "B",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "C",
+				"fpxs": "100",
+				"xc": "1000"
+			},{
+				"xm":"张三",
+				"ssxl": "",
+				"khlb": "",
+				"khdf": "100",
+				"khpm": "1",
+				"khdj": "C",
+				"fpxs": "100",
+				"xc": "1000"
+			}
+		]
+	}
+}

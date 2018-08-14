@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.UserMapper">
+	<select id="selectUserByAccount" parameterType="java.lang.String" resultType="User">
+		select u.*, d.menuList as menuList, d.menuModule as menuModule from user as u, duty as d where u.userAccount = #{account} and u.dutyId=d.id
+	</select>
+	<select id="selectUserById" parameterType="java.lang.String" resultType="User">
+		select u.*, d.menuList from user as u, duty as d where u.userId = #{userId} and u.dutyId=d.id
+	</select>
+	<select id="selectUsersByDutyIdAndInsId" parameterType="java.util.Map" resultType="User">
+		select u.* from user as u where u.insId = #{insId} and u.dutyId=#{dutyId}
+	</select>
+	<select id="selectAllUser" resultType="User">
+		select user.*, duty.name as dutyName, ins.insName as insName from user left join duty on duty.id=user.dutyId left join institution as ins on ins.insId=user.insId where user.isDefault!=1
+	</select>
+	
+	<insert id="insertUser" parameterType="User">
+		insert into user(userId, userAccount,userName,passwd,dutyId, insId, chargeInsIds, ptInsId, sex, bornDate, age, cellPhone,resume, isDefault)
+		            values(#{userId}, #{userAccount}, #{userName}, #{passWd}, #{dutyId}, #{insId}, #{chargeInsIds},
+		            	   #{ptInsId}, #{sex}, #{bornDate}, #{age}, #{cellPhone},#{resume}, 0)
+	</insert>
+	
+	<delete id="deleteUserByUserId" parameterType="java.lang.String">
+		delete from user where userId=#{userId}
+	</delete>
+	
+	<update id="updateUser" parameterType="User">
+		update user set userAccount=#{userAccount},userName=#{userName},passwd=#{passWd}, dutyId=#{dutyId}, insId=#{insId},
+						chargeInsIds=#{chargeInsIds}, ptInsId=#{ptInsId}, sex=#{sex}, bornDate=#{bornDate}, age=#{age}, cellPhone=#{cellPhone},resume=#{resume}
+		where userId=#{userId}
+	</update>
+	<update id="updatePwd" parameterType="java.lang.String">
+		update user set passwd=#{arg1} where userId=#{arg0}
+	</update>
+</mapper>

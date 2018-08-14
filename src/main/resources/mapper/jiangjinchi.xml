@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.JiangJinChiMapper">
+	
+	<insert id="insert" parameterType="JiangJinChi">
+		insert into jiangjinchi(dutyId, year, totalMoney, step)
+		values(#{dutyId}, #{year}, #{totalMoney}, #{step})
+	</insert>
+	
+	<select id="selectByYear" parameterType="java.lang.String" resultType="JiangJinChi">
+		select * from jiangjinchi where year=#{year}
+	</select>
+	
+	<select id="selectAllYear" resultType="java.lang.String">
+		select distinct year from jiangjinchi
+	</select>
+	
+	<select id="selectByDutyIdAndYear" resultType="JiangJinChi">
+		select * from jiangjinchi where year=#{year} and dutyId like #{likeCondition}
+	</select>
+	
+	<update id="updateByDutyIdAndYear" parameterType="JiangJinChi">
+		update jiangjinchi set totalMoney=#{totalMoney}, step=#{step}
+		where dutyId=#{dutyId} and year=#{year}
+	</update>
+	
+	<delete id="deleteByDutiIdAndYear" parameterType="JiangJinChi">
+		delete from jiangjinchi where dutyId=#{dutyId} and year=#{year}
+	</delete>
+	
+</mapper>

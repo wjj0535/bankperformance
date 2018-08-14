@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.JiGouYDKaoHeMapper">
+    <insert id="insert" parameterType="JiGouYDKaoHe">
+    	insert into jigouydkaohe(insId, insName, yearMonth, details, score) 
+    	                 values(#{insId}, #{insName},#{yearMonth},#{details},#{score})
+    </insert>
+    <select id="selectByInsIdAndYearMonth" parameterType="JiGouYDKaoHe" resultType="JiGouYDKaoHe">
+    	select * from institution as i left join jigouydkaohe as j on i.insId = j.insId and yearMonth=#{yearMonth}
+    	where i.insId=#{insId}
+    </select>
+    <select id="selectByInsIdAndYear" parameterType="JiGouYDKaoHe" resultType="JiGouYDKaoHe">
+    	select * from institution as i left join jigouydkaohe as j on i.insId = j.insId
+    	where i.insId=#{insId} and i.isYuanjiao=#{isYuanJiao} and j.yearMonth like '${yearMonth}%'
+    </select>
+	<select id="selectByTypeAndYearMonth" parameterType="JiGouYDKaoHe" resultType="JiGouYDKaoHe">
+    	select * from institution as i left join jigouydkaohe as j on i.insId = j.insId and yearMonth=#{yearMonth}
+    	where i.isYuanjiao=#{isYuanJiao} order by score desc
+    </select>
+    <update id="updateByInsIdAndYearMonth" parameterType="JiGouYDKaoHe">
+    	update jigouydkaohe set score=#{score}
+    	where insId=#{insId} and yearMonth=#{yearMonth}
+    </update>
+    <update id="updateKhjgByInsIdAndYearMonth" parameterType="JiGouYDKaoHe">
+    	update jigouydkaohe set rank=#{rank}, level=#{level}, fpxs=#{fpxs}
+    	where insId=#{insId} and yearMonth=#{yearMonth}
+    </update>
+</mapper>

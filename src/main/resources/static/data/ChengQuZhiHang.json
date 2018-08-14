@@ -1,0 +1,104 @@
+{
+	"merges": [{
+		"index": 0,
+		"xiangmu": "KPI关键绩效",
+		"rowspan": 6
+	}, {
+		"index": 6,
+		"xiangmu": "MBO管理目标",
+		"rowspan": 5
+	}, {
+		"index": 12,
+		"xiangmu": "CRC风险管理",
+		"rowspan": 3
+	}, {
+		"index": 15,
+		"xiangmu": "ABC综合评价",
+		"rowspan": 2
+	}],
+	"data": {
+		"total": 16,
+		"rows": [{
+				"zhibiao": "考核利润",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "储蓄存款",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "企业存款",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				
+				"zhibiao": "中间业务",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "不良下降额",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "不良还贷率",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "涉农贷款比例",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "小微贷款比例",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "人均考核利润",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "人均存款日均",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "表外资产清收率",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "三防一保",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"zhibiao": "奖励积分",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"zhibiao": "违规积分",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"zhibiao": "部门评价",
+				"fenzhi": 10.00,
+				"kaohedanwei": "监事会"
+			},
+			{
+				"zhibiao": "高管评价",
+				"fenzhi": 10.00,
+				"kaohedanwei": "监事会"
+			}
+		]
+	}
+}

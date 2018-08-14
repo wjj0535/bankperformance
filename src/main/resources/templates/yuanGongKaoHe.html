@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"></meta>
+<script src="/jquery-easyui-1.5.4.4/jquery.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/jquery.easyui.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/locale/easyui-lang-zh_CN.js"	type="text/javascript"></script>
+<script src="/js/global.js"></script>
+<link href="/jquery-easyui-1.5.4.4/themes/default/easyui.css"	rel="stylesheet" type="text/css" />
+<link href="/jquery-easyui-1.5.4.4/themes/icon.css" rel="stylesheet"	type="text/css" />
+<link href="/css/system.css" rel="stylesheet"	type="text/css" />
+<style>
+.head{height: 40px; background: RGB(30, 64, 128); padding: 15px 0px 10px 20px; line-height:26px;color:white;font-size:28px;font-weight: bold;}
+</style>
+<script th:inline="javascript">
+/*<![CDATA[*/
+	var dutyId = [[${dutyId}]];
+	var insId = [[${insId}]];
+$(function() {      
+    $('#yd_date').datebox({    
+          onShowPanel : function() {// 显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层    
+              span.trigger('click'); // 触发click事件弹出月份层    
+              $(".datebox-button-a").first().hide();
+              if (!tds)    
+                  setTimeout(function() {// 延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔    
+                      tds = p.find('div.calendar-menu-month-inner td');    
+                      tds.click(function(e) {    
+                          e.stopPropagation(); // 禁止冒泡执行easyui给月份绑定的事件    
+                          var year = /\d{4}/.exec(span.html())[0]// 得到年份    
+                          , month = parseInt($(this).attr('abbr'), 10) + 1; // 月份    
+                          $('#yd_date').datebox('hidePanel')// 隐藏日期对象    
+                          .datebox('setValue', year + '-' + month); // 设置日期的值    
+                      });    
+                  }, 0);    
+          },    
+          parser : function(s) {// 配置parser，返回选择的日期    
+              if (!s)    
+                  return new Date();    
+              var arr = s.split('-');    
+              return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);    
+          },    
+          formatter : function(d) {    
+              var month = d.getMonth();  
+              if(month<=10){  
+                  month = "0"+month;  
+              }  
+              if (d.getMonth() == 0) {    
+                  return d.getFullYear()-1 + '-' + 12;    
+              } else {    
+                  return d.getFullYear() + '-' + month;    
+              }    
+          }// 配置formatter，只返回年月    
+      });    
+      var p = $('#yd_date').datebox('panel'), // 日期选择对象    
+      tds = false, // 日期选择对象中月份    
+      span = p.find('span.calendar-text'); // 显示月份层的触发控件    
+      
+  });
+
+function saveND()
+{
+	var url = "/putNdKe";
+	if(!$("#ndform").form("validate"))
+	{
+		alert("请填入必填项");
+		return ;
+	}
+	var obj = new Object();
+	obj.userId = $("#edit_userId").val();
+	obj.dutyId = dutyId;
+	obj.userName = $("#edit_userName").val();
+	obj.year = $("#year").combobox("getValue");
+	obj.ckjs = $("#edit_ckjs").val();
+	obj.prevCkjs = $("#edit_prevCkjs").val();
+	obj.lastZL = $("#edit_lastZL").val();	
+	$.ajax({
+        type: "post",
+        url: url,
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+                    if(data.code == "0000")
+                   	{
+                    	alert("操作成功");
+                    	$('#nddlg').dialog('close');
+                    	reloadNdKh();
+                   	}
+                    else
+                   	{
+                   		alert(data.msg);
+                   	}
+                 }
+    });	
+}
+function modifyNdRow()
+{
+    var row = $('#nianDuTable').datagrid('getSelected');
+    if(row == undefined)
+   	{
+    	alert("请选择员工");
+    	return;
+   	}
+    if (row){
+    	var prevCkjs = "";
+    	$('#nddlg').dialog('open');
+    	$('#edit_userId').textbox('setValue',row.userId);
+    	$('#edit_userId').textbox('disable');
+    	$('#edit_userName').textbox('setValue',row.userName);
+    	$('#edit_userName').textbox('disable');
+    	$('#edit_ckjs').textbox('setValue',row.ckjs);
+    	if(row.prevCkjs!=undefined && row.prevCkjs!="")
+   		{
+    		$('#edit_prevCkjs').textbox('setValue', row.prevCkjs);
+    		$('#edit_prevCkjs').textbox('disable');
+   		}
+    	else{
+    		$('#edit_prevCkjs').textbox('enable');
+    		$('#edit_prevCkjs').textbox('setValue', "");
+    	}
+    	if(row.lastZL!=undefined && row.lastZL!="")
+   		{
+    		$('#edit_lastZL').textbox('setValue', row.prevCkjs);
+    		$('#edit_lastZL').textbox('disable');
+   		}
+    	else{
+    		$('#edit_lastZL').textbox('enable');
+    		$('#edit_lastZL').textbox('setValue', "");
+    	}
+    }
+}
+function reloadNdKh()
+{
+	var date = new Date();
+	$.ajax({
+		url : "/getNdkeList/"+dutyId+"/"+date.getFullYear(),
+		type : 'get',
+		success : function(data) {
+			if(data.code == "0000")
+			{
+				var obj = data.responseData.dataSet;
+				for(var i=0; i<obj.length; i++)
+				{
+					if(obj[i].ckjs == 0 || obj[i].ckjs == undefined)
+					{obj[i].ckjs = "";}
+					if(obj[i].prevCkjs == 0 || obj[i].prevCkjs == undefined)
+					{obj[i].prevCkjs = "";}
+				}
+				$('#nianDuTable').datagrid('loadData', obj);
+			}
+			else
+			{alert(data.msg)}
+		}
+	});
+}
+function saveYD()
+{
+	var url = "/putYdKe";
+	if(!$("#ydform").form("validate"))
+	{
+		alert("请填入必填项");
+		return ;
+	}
+	var obj = new Object();
+	obj.userId = $("#edit_yd_userId").val();
+	obj.dutyId = dutyId;
+	obj.userName = $("#edit_yd_userName").val();
+	obj.yearMonth = $("#yd_date").combobox("getValue").replace("-", "");
+	obj.cunKuan = $("#edit_yd_cunKuan").val();
+	obj.daiKuan = $("#edit_yd_daiKuan").val();
+	obj.buLiangDaiKuan = $("#edit_yd_buliangdaiKuan").val();
+	var arr = new Array();
+	var obj0 = new Object();
+	obj0.code = "wy";
+	obj0.value = $("#edit_yd_wy").textbox('getValue');
+	var obj1 = new Object();
+	obj1.code = "sjyh";
+	obj1.value = $("#edit_yd_sjyh").textbox('getValue');
+	arr.push(obj0);
+	arr.push(obj1);
+	obj.other = JSON.stringify(arr);
+	$.ajax({
+        type: "post",
+        url: url,
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+                    if(data.code == "0000")
+                   	{
+                    	alert("操作成功");
+                    	$('#yddlg').dialog('close');
+                    	reloadYdKh();
+                   	}
+                    else
+                   	{
+                   		alert(data.msg);
+                   	}
+                 }
+    });	
+}
+function modifyYdRow()
+{
+    var row = $('#yueDuTable').datagrid('getSelected');
+    if(row == undefined)
+   	{
+    	alert("请选择员工");
+    	return;
+   	}
+    if (row){
+    	var prevCkjs = "";
+    	$('#yddlg').dialog('open');
+    	$('#edit_yd_userId').textbox('setValue',row.userId);
+    	$('#edit_yd_userId').textbox('disable');
+    	$('#edit_yd_userName').textbox('setValue',row.userName);
+    	$('#edit_yd_userName').textbox('disable');
+    	if(row.cunKuan == undefined)
+			row.cunKuan = "";    		
+    	$('#edit_yd_cunKuan').textbox('setValue',row.cunKuan);
+    	if(row.daiKuan == undefined)
+			row.daiKuan = "";    
+    	$('#edit_yd_daiKuan').textbox('setValue',row.daiKuan);
+    	if(row.buliangdaiKuan == undefined)
+			row.buliangdaiKuan = "";    
+    	$('#edit_yd_buliangdaiKuan').textbox('setValue',row.buLiangDaiKuan);
+    	
+    	var obj = JSON.parse(row.other.toString());
+    	for(var i=0;i<obj.length; i++)
+    	{
+    		var item = obj[i];
+    		if(item.code == "wy")
+    		{
+    			$("#edit_yd_wy").textbox('setValue', item.value);
+    		}
+    		if(item.code == "sjyh")
+    		{
+    			$("#edit_yd_sjyh").textbox('setValue', item.value);
+    		}
+    	}
+    }
+}
+function reloadYdKh()
+{
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = date.getMonth()+1;
+	month =(month<10 ? "0"+month:month);   
+	var mydate = year.toString()+month.toString();
+	mydate.replace("-", "");
+	var url = "/getYdkeList/"+insId+"/"+dutyId+"/"+mydate;
+	$.ajax({
+		url : url,
+		type : 'get',
+		success : function(data) {
+			if(data.code == "0000")
+			{
+				var obj = data.responseData.dataSet;
+				var showText = "";
+				for(var i=0; i<data.responseData.dataSet.length;i++)
+        		{
+//         			var obj = data.responseData.dataSet[i];
+//         			if(obj.code == "wy") 
+//         				showText += "网银 "+obj.value +"笔"+"<br></br>";
+//         			if(obj.code == "sjyh") 
+//         				showText += "手机银行 "+obj.value +"笔"+"<br></br>";
+        		}
+				$('#yueDuTable').datagrid('loadData', obj);
+			}
+			else
+			{alert(data.msg)}
+		}
+	});
+}
+$(document).ready(function() {
+	 		var showNdkh = [[${showNdkh}]];
+	 		if(showNdkh != 1)
+ 			{
+	 			$("#tabs").tabs("close", "年度考核");
+ 			}
+			var nInsId = parseInt(insId);
+// 			if(nInsId >= 12 && nInsId <= 23)
+// 				$("#tabs").tabs("close", "年度考核");
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth()+2;
+			month =(month<10 ? "0"+month:month);   
+			var mydate = year.toString()+"-"+month.toString();
+			$("#yd_date").datebox('setValue', mydate);
+			$("#title").text("绩效考核-" + [[${dutyName}]]);
+			//获取年度考核列表
+			reloadNdKh();
+			reloadYdKh();
+			$('#yueDuTable').datagrid({onDblClickRow: function(rowIndex, rowData){
+				modifyYdRow();
+			}});
+			$('#nianDuTable').datagrid({onDblClickRow: function(rowIndex, rowData){
+				modifyNdRow();
+			}});
+			$("#year").combobox('select', date.getFullYear());
+		});
+function updateActions(index) {
+	$('#yueDuTable').datagrid('updateRow', {
+		index : index,
+		row : {}
+	});
+}
+function formatOther(val, row)
+{
+	if(val == "" || val == undefined)
+		return val;
+	var obj = JSON.parse(val.toString());
+	var ret = "";
+	for(var i=0;i<obj.length; i++)
+	{
+		var item = obj[i];
+		if(item.code == "wy")
+		{
+			ret += "网银："+item.value;
+		}
+		if(item.code == "sjyh")
+		{
+			ret += "手机银行："+item.value;
+		}
+		ret += "<br/>";
+	}
+	return ret;
+}
+/*]]>*/
+</script>
+</head>
+<body>
+	<h3 id="title"></h3>
+	<div class="easyui-tabs" style="width: 100%" id="tabs">
+		<div title="月度考核" style="padding: 10px">
+			<div style="margin: 10px 2px;">
+				<label for="datetime">月份：</label><input type="text" id="yd_date" class="easyui-datebox" data-options="today:true"></input>
+			</div>
+			<table class="easyui-datagrid" id="yueDuTable" data-options="singleSelect:true,toolbar:'#ydtb'">
+			<thead>
+					<tr>
+						<th data-options="field:'ck',checkbox:true"></th>
+						<th data-options="field:'insName',width:120,align:'center'">所属机构</th>
+						<th data-options="field:'userId',width:120,align:'center'">员工ID</th>
+						<th data-options="field:'userName',width:120,align:'center'">姓名</th>
+						<th data-options="field:'yearMonth',width:120,align:'center'">月份</th>
+						<th data-options="field:'cunKuan',width:120,align:'center'">存款</th>
+						<th data-options="field:'daiKuan',width:120,align:'center'">贷款</th>
+						<th data-options="field:'buLiangDaiKuan',width:120,align:'center'">不良贷款</th>
+						<th data-options="field:'other',width:120,align:'center',fitColumns:true" formatter='formatOther'>其他</th>
+						<th data-options="field:'zongLiang',width:120,align:'center'">存款当量</th>
+					</tr>
+			</thead>
+			</table>
+		</div>
+		<div title="年度考核" style="padding: 10px">
+			<div style="margin: 10px 2px;">
+				<label for="year">年份：</label><select id="year" class="easyui-combobox" data-options="editable:false,width:100">
+											<option th:each="year:${yearList}" th:value="${year}" th:text="${year}"></option></select>
+			</div>
+			<table class="easyui-datagrid" id="nianDuTable" data-options="singleSelect:true,toolbar:'#ndtb'">
+			<thead>
+					<tr>
+						<th data-options="field:'ck',checkbox:true"></th>
+						<th data-options="field:'insName',width:120,align:'center'">所属机构</th>
+						<th data-options="field:'userId',width:120,align:'center'">员工ID</th>
+						<th data-options="field:'userName',width:120,align:'center'">姓名</th>
+						<th data-options="field:'year',width:120,align:'center'">年份</th>
+						<th data-options="field:'ckjs',width:120,align:'center'">今年考核基数</th>
+						<th data-options="field:'prevCkjs',width:120,align:'center'">去年考核基数</th>
+						<th data-options="field:'lastZL',width:120,align:'center'">去年实际完成数</th>						
+					</tr>
+			</thead>
+			</table>
+		</div>
+	</div>
+	<div id="ndtb" style="padding:5px;height:auto">
+		<div style="margin-bottom:5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="modifyNdRow();" >录入</a>
+		</div>
+	</div>
+	<div id="nddlg" class="easyui-dialog" title="录入年度考核数据" data-options="iconCls:'icon-edit',closed:true" style="width: 400px; height: 300px; padding: 10px;">
+			<form id="ndform">
+			<table cellpadding="5">
+				<tr>
+					<td>用户ID:</td>
+					<td><input class="easyui-textbox" type="text" id="edit_userId" data-options="required:true" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>姓名:</td>
+					<td><input class="easyui-textbox" type="text" id="edit_userName" data-options="required:true" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>存款基数:</td>
+					<td><input class="easyui-numberbox" type="text" id="edit_ckjs" data-options="required:true,min:0,precision:2" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>去年存款基数:</td>
+					<td><input class="easyui-numberbox" type="text" id="edit_prevCkjs" data-options="required:true,min:0,precision:2" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>去年实际完成数:</td>
+					<td><input class="easyui-numberbox" type="text" id="edit_lastZL" data-options="required:true,min:0,precision:2" style="width:250px;"></input></td>
+				</tr>
+			</table>
+			</form>
+		<div style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveND()">保存</a> 
+		</div>
+	</div>
+	<div id="ydtb" style="padding:5px;height:auto">
+		<div style="margin-bottom:5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="modifyYdRow();" >录入</a>
+		</div>
+	</div>
+	<div id="yddlg" class="easyui-dialog" title="月度业务数据" data-options="iconCls:'icon-edit',closed:true" style="width: 400px; height: 350px; padding: 10px;">
+			<form id="ydform">
+			<table cellpadding="5">
+				<tr>
+					<td>用户ID:</td>
+					<td><input class="easyui-textbox" type="text" id="edit_yd_userId" data-options="required:true" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>姓名:</td>
+					<td><input class="easyui-textbox" type="text" id="edit_yd_userName" data-options="required:true" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>存款:</td>
+					<td><input class="easyui-numberbox" type="text" id="edit_yd_cunKuan" data-options="required:true,min:0,precision:2" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>贷款:</td>
+					<td><input class="easyui-numberbox" type="text" id="edit_yd_daiKuan" data-options="required:true,min:0,precision:2" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>不良贷款:</td>
+					<td><input class="easyui-numberbox" type="text" id="edit_yd_buliangdaiKuan" data-options="required:true,min:0,precision:2" style="width:250px;"></input></td>
+				</tr>
+				<tr>
+					<td>其他:</td>
+					<td><table cellpadding="2">
+						<tr><td>网银：</td><td><input class="easyui-numberbox" id="edit_yd_wy" data-options="min:0,precision:0" style="width:150px;"></input></td></tr>
+						<tr><td>手机银行：</td><td><input class="easyui-numberbox" id="edit_yd_sjyh" data-options="min:0,precision:0" style="width:150px;"></input></td></tr>
+						</table></td>
+				</tr>
+			</table>
+			</form>
+		<div style="text-align: center; padding: 5px">
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveYD()">保存</a> 
+		</div>
+	</div>
+</body>
+</html>

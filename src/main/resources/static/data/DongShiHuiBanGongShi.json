@@ -1,0 +1,99 @@
+{
+	"merges": [{
+		"index": 0,
+		"xiangmu": "KPI关键绩效",
+		"rowspan": 3
+	}, {
+		"index": 3,
+		"xiangmu": "MBO目标管理",
+		"rowspan": 7
+	}, {
+		"index": 10,
+		"xiangmu": "CRC风险内控",
+		"rowspan": 3
+	}, {
+		"index": 13,
+		"xiangmu": "ABC综合评价",
+		"rowspan": 2
+	}],
+	"data": {
+		"total": 15,
+		"rows": [{
+				"zhibiao": "拨备利润",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "部门创收",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "人均存款",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "薪酬利润率",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "人均利润",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "培养计划",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "轮岗交流",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "组织建设",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "党建责任制",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"zhibiao": "队伍建设",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				
+				"zhibiao": "舆情管理",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"zhibiao": "奖励积分",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"zhibiao": "违规积分",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"zhibiao": "同级评价",
+				"fenzhi": 10.00,
+				"kaohedanwei": "监事会"
+			},
+			{
+				"zhibiao": "高管评价",
+				"fenzhi": 10.00,
+				"kaohedanwei": "监事会"
+			}
+		]
+	}
+}

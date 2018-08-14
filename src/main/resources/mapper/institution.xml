@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.InstitutionMapper">
+	
+	<select id="selectAll" resultType="Institution">
+		select * from institution 
+	</select>
+	<select id="selectByInsId" parameterType="java.lang.String" resultType="Institution">
+		select * from institution where insId=#{insId}
+	</select>
+</mapper>

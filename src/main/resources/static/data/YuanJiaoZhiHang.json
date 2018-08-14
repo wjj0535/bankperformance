@@ -1,0 +1,97 @@
+{
+	"merges": [{
+		"index": 0,
+		"rowspan": 6
+	}, {
+		"index": 6,
+		"rowspan": 5
+	}, {
+		"index": 12,
+		"rowspan": 3
+	}, {
+		"index": 15,
+		"rowspan": 2
+	}],
+	"data": {
+		"total": 16,
+		"rows": [{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "储蓄存款",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "中间业务",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "人均储蓄存款",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "人均中间业务",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "手机银行",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "网上银行",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "聚合支付",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "KPI关键绩效",
+				"zhibiao": "柜面替代率",
+				"fenzhi": 10.00,
+				"kaohedanwei": "经营管理层"
+			},
+			{
+				"xiangmu": "CRC风险管理",
+				"zhibiao": "三防一保",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"xiangmu": "CRC风险管理",
+				"zhibiao": "奖励积分",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"xiangmu": "CRC风险管理",
+				"zhibiao": "违规积分",
+				"fenzhi": 10.00,
+				"kaohedanwei": "风险内控管理委员会"
+			},
+			{
+				"xiangmu": "ABC综合评价",
+				"zhibiao": "部门评价",
+				"fenzhi": 10.00,
+				"kaohedanwei": "监事会"
+			},
+			{
+				"xiangmu": "ABC综合评价",
+				"zhibiao": "高管评价",
+				"fenzhi": 10.00,
+				"kaohedanwei": "监事会"
+			}
+		]
+	}
+}

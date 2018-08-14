@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"></meta>
+<script src="/jquery-easyui-1.5.4.4/jquery.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/jquery.easyui.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/locale/easyui-lang-zh_CN.js"	type="text/javascript"></script>
+<script src="/js/global.js"></script>
+<link href="/jquery-easyui-1.5.4.4/themes/default/easyui.css"	rel="stylesheet" type="text/css" />
+<link href="/jquery-easyui-1.5.4.4/themes/icon.css" rel="stylesheet"	type="text/css" />
+<link href="/css/system.css" rel="stylesheet"	type="text/css" />
+<style>
+.head{height: 40px; background: RGB(30, 64, 128); padding: 15px 0px 10px 20px; line-height:26px;color:white;font-size:28px;font-weight: bold;}
+</style>
+<script th:inline="javascript">
+/*<![CDATA[*/
+	var isYuanJiao = [[${isYuanJiao}]];
+$(function() {      
+    $('#yd_date').datebox({    
+          onShowPanel : function() {// 显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层    
+              span.trigger('click'); // 触发click事件弹出月份层    
+              $(".datebox-button-a").first().hide();
+              if (!tds)    
+                  setTimeout(function() {// 延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔    
+                      tds = p.find('div.calendar-menu-month-inner td');    
+                      tds.click(function(e) {    
+                          e.stopPropagation(); // 禁止冒泡执行easyui给月份绑定的事件    
+                          var year = /\d{4}/.exec(span.html())[0]// 得到年份    
+                          , month = parseInt($(this).attr('abbr'), 10) + 1; // 月份    
+                          $('#yd_date').datebox('hidePanel')// 隐藏日期对象    
+                          .datebox('setValue', year + '-' + month); // 设置日期的值    
+                          reloadYdKh();
+                      });    
+                  }, 0);    
+          },    
+          parser : function(s) {// 配置parser，返回选择的日期    
+              if (!s)    
+                  return new Date();    
+              var arr = s.split('-');    
+              return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);    
+          },    
+          formatter : function(d) {    
+              var month = d.getMonth();  
+              if(month<=10){  
+                  month = "0"+month;  
+              }  
+              if (d.getMonth() == 0) {    
+                  return d.getFullYear()-1 + '-' + 12;    
+              } else {    
+                  return d.getFullYear() + '-' + month;    
+              }    
+          }// 配置formatter，只返回年月    
+      });    
+      var p = $('#yd_date').datebox('panel'), // 日期选择对象    
+      tds = false, // 日期选择对象中月份    
+      span = p.find('span.calendar-text'); // 显示月份层的触发控件    
+      
+  });
+
+function reloadYdKh()
+{
+	var mydate = $('#yd_date').datebox('getValue');
+	mydate = mydate.replace("-", "");
+	var obj = new Object();
+	obj.isYuanJiao = isYuanJiao;
+	obj.yearMonth = mydate;
+	$.ajax({
+		url : "/getJgKaoHeList/",
+		type : 'post',
+		data:JSON.stringify(obj),
+		contentType: "application/json; charset=utf-8",
+		async:true,
+		success : function(data) {
+			if(data.code == "0000")
+			{
+				var obj = data.responseData.dataSet;
+				$('#yueDuTable').datagrid('loadData', obj);
+			}
+			else
+			{alert(data.msg)}
+		}
+	});
+}
+function reloadNdKh()
+{
+	var obj = new Object();
+	obj.isYuanJiao = isYuanJiao;
+	obj.year = $("#year").val();
+	$.ajax({
+		url : "/getJgNdKhjg/",
+		type : 'post',
+		data:JSON.stringify(obj),
+		contentType: "application/json; charset=utf-8",
+		async:true,
+		success : function(data) {
+			if(data.code == "0000")
+			{
+				var obj = data.responseData.dataSet;
+				$('#nianDuTable').datagrid('loadData', obj);
+			}
+			else
+			{alert(data.msg)}
+		}
+	});
+}
+function selectTab(title, index)
+{
+	if(index == 0)
+		reloadYdKh();
+	if(index == 1)
+		reloadNdKh();
+}
+$(document).ready(function() {
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth()+2;
+			month =(month<10 ? "0"+month:month);   
+			var mydate = year.toString()+"-"+month.toString();
+			$("#yd_date").datebox('setValue', mydate);
+			$("#title").text("绩效考核-" + [[${dutyName}]]);
+			//获取年度考核列表
+			$("#year").combobox('select', date.getFullYear());
+			reloadYdKh();
+		});
+/*]]>*/
+</script>
+</head>
+<body>
+	<h3 id="title"></h3>
+	<div class="easyui-tabs" style="width: 100%" id="tabs" data-options="onSelect: selectTab">
+		<div title="月度考核" style="padding: 10px">
+			<div style="margin: 10px 2px;">
+				<label for="datetime">月份：</label><input type="text" id="yd_date" class="easyui-datebox" data-options="today:true"></input>
+			</div>
+			<table class="easyui-datagrid" id="yueDuTable" data-options="singleSelect:true,toolbar:'#ydtb'">
+			<thead>
+					<tr>
+						<th data-options="field:'insId',width:120,align:'center'">部门ID</th>
+						<th data-options="field:'insName',width:120,align:'center'">机构名称</th>
+						<th data-options="field:'yearMonth',width:120,align:'center'">月份</th>
+						<th data-options="field:'score',width:120,align:'center'">分数</th>
+						<th data-options="field:'rank',width:120,align:'center'">排名</th>						
+						<th data-options="field:'level',width:120,align:'center'">等级</th>
+						<th data-options="field:'fpxs',width:120,align:'center'">分配系数</th>
+					</tr>
+			</thead>
+			</table>
+		</div>
+		<div title="年度考核" style="padding: 10px">
+			<div style="margin: 10px 2px;">
+				<label for="datetime">年份：</label><select class="easyui-combobox" id="year" data-options="editable:false" style="width:250px;">
+						<option th:each="year:${yearList}" th:value="${year}" th:text="${year}"></option>
+						</select>
+			</div>
+			<table class="easyui-datagrid" id="nianDuTable" data-options="singleSelect:true,toolbar:'#ydtb'">
+			<thead>
+					<tr>
+						<th data-options="field:'insId',width:120,align:'center'">部门ID</th>
+						<th data-options="field:'insName',width:120,align:'center'">机构名称</th>
+						<th data-options="field:'year',width:120,align:'center'">年份</th>
+						<th data-options="field:'score',width:120,align:'center'">分数</th>
+						<th data-options="field:'rank',width:120,align:'center'">排名</th>						
+						<th data-options="field:'level',width:120,align:'center'">等级</th>
+						<th data-options="field:'fpxs',width:120,align:'center'">分配系数</th>
+					</tr>
+			</thead>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

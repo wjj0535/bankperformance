@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.NianDuKaoHeMapper">
+
+    <insert id="insert" parameterType="NianDuKaoHe">
+    	insert into niandukaohe(userId, insId, dutyId, year, ckjs, prevCkjs, lastZL) 
+    	                 values(#{userId}, #{insId}, #{dutyId},#{year},
+    	                        #{ckjs},#{prevCkjs}, #{lastZL})
+    </insert>
+    <select id="selectByUserIdAndYear" parameterType="NianDuKaoHe" resultType="NianDuKaoHe">
+    	select * from niandukaohe where userId=#{userId} and year=#{year}
+    </select>
+     <select id="selectByYearAndInsAndDuty" parameterType="NianDuKaoHe" resultType="NianDuKaoHe">
+    	select u.*, i.insName, n.ckjs as ckjs, n.prevCkjs as prevCkjs, n.lastZL as lastZL
+    	from user as u 
+    	left join niandukaohe as n on u.userId=n.userId  and n.year=#{year} 
+    	left join institution as i on i.insId=u.insId
+    	where u.isDefault!='1' and u.dutyId=#{dutyId} and u.insId=#{insId}
+    </select>
+    <select id="selectByYearAndDuty" parameterType="NianDuKaoHe" resultType="NianDuKaoHe">
+    	select u.*, i.insName, n.ckjs as ckjs, n.prevCkjs as prevCkjs, n.lastZL as lastZL
+    	from user as u 
+    	left join niandukaohe as n on u.userId=n.userId  and n.year=#{year} 
+    	left join institution as i on i.insId=u.insId
+    	where u.isDefault!='1' and u.dutyId=#{dutyId}
+    </select>
+    <select id="selectByYearAndXulieId" parameterType="NianDuKaoHe" resultType="NianDuKaoHe">
+    	select u.*, i.insName, n.ckjs as ckjs, n.prevCkjs as prevCkjs, n.lastZL as lastZL
+    	from user as u 
+    	left join duty as d on u.dutyId=d.id and d.xulieId=#{xulieId}
+    	left join niandukaohe as n on u.userId=n.userId  and n.year=#{year}
+    	left join institution as i on i.insId=u.insId 
+    	where u.isDefault!='1'
+    </select>
+    <select id="selectGroupByInsIdAndYear" parameterType="java.lang.String" resultType="java.lang.String">
+    	select year from niandukaohe where insId=#{insId} group by year 
+    </select>
+    <update id="updateByUserIdAndYear" parameterType="NianDuKaoHe">
+    	update niandukaohe set ckjs=#{ckjs}, prevCkjs=#{prevCkjs}, lastZL=#{lastZL}
+    	where userId=#{userId} and year=#{year}
+    </update>
+    <update id="updateScoreByUserIdAndYear" parameterType="NianDuKaoHe">
+    	update niandukaohe set score=#{score}
+    	where userId=#{userId} and year=#{year}
+    </update>
+    <update id="updateKhjgByUserIdAndYear" parameterType="NianDuKaoHe">
+    	update niandukaohe set rank=#{rank}, level=#{level} where userId=#{userId} and year=#{year}
+    </update>
+</mapper>

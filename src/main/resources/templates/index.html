@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<title>扎鲁特银行绩效考核系统</title>
+<script th:src="@{/jquery-easyui-1.5.4.4/jquery.min.js}"></script>
+<script th:src="@{/jquery-easyui-1.5.4.4/jquery.easyui.min.js}"></script>
+<script th:src="@{/js/json2.js}" type="text/javascript}"></script>
+
+<link th:href="@{/jquery-easyui-1.5.4.4/themes/default/easyui.css}"	rel="stylesheet" type="text/css" />
+<link th:href="@{/jquery-easyui-1.5.4.4/themes/icon.css}" rel="stylesheet"	type="text/css" />
+<script type="text/javascript">
+	$(document).ready(function() {
+
+	});
+</script>
+<style>
+body {
+	background: url(./image/bodybg.jpg) no-repeat RGB(230,230,230);
+	background-size:100%;
+	font-family: 微软雅黑;
+	margin:0px;
+	padding:0px;
+}
+h1{color:RGB(230,230,230)}
+.center {
+	margin-left:auto;
+	margin-right:auto;
+}
+.loginpanel {
+ 	background-color: RGB(3,58,151); 
+ 	border-radius:5px; 
+ 	width:600px;
+}
+table.login{font-size:17px;color:white;width:100%;border-collapse:collapse;}
+table.login input{line-height:20px;width:200px;}
+table.login td{padding:30px;padding-bottom:0px;}
+table.login td.col1{width:40%;text-align:right}
+table.login td.col2{width:60%;padding-left:0px;}
+</style>
+<script>
+function login()
+{
+	var obj = new Object();
+	obj.userAccount = $("#userAccount").val();
+	obj.passWd = $("#passWd").val();
+	$.ajax({
+        type: "post",
+        url: "/login",
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+                    if(data.code == "0000")
+                   	{
+                    	window.location.href = "./mainframe.html";
+                   	}
+                    else
+                   	{
+                   		alert(data.msg);
+                   	}
+                 }
+    });
+	return false;
+}
+$(document).ready(function() {
+	$(document).keyup(function(event){
+		  if(event.keyCode ==13){
+		    $("#login").trigger("click");
+		  }
+		});
+});
+</script>
+</head>
+<body>
+	<h1 style="margin-top:140px;text-align:center;letter-spacing:3px;font-size:38px;">扎鲁特银行绩效考核系统</h1>
+	<div class="loginpanel center">
+		<table class="login">
+			<tr>
+				<td class="col1"><img style="height:18px" src="./image/user_friend.png"></img>&nbsp;用户名</td>
+				<td class="col2"><input class="easyui-textbox" id="userAccount"></input></td>
+			</tr>
+			<tr>
+				<td class="col1"><img style="height:18px" src="./image/key_login.png"></img>&nbsp;密&nbsp;&nbsp;&nbsp;&nbsp;码</td>
+				<td class="col2"><input class="easyui-textbox" id="passWd" type="password"></input></td>
+			</tr>
+		</table>
+		<div class="center" style="width:100px;">
+			<a href="#" id="login" onclick="return login()" style="width:100px;margin:30px 10px;" class="easyui-linkbutton "><span style="font-size:14px;">登    录</span></a>
+		</div>
+	</div>
+</body>
+</html>

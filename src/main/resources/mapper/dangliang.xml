@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.wangjj.bankperformance.Mapper.DangliangMapper">
+	
+	<insert id="insert" parameterType="Dangliang">
+		insert into dangliang(code, value) values(#{code}, ${value})
+	</insert>
+	
+	<select id="selectAll" resultType="Dangliang">
+		select * from dangliang
+	</select>
+	
+	<select id="selectByCode" parameterType="java.lang.String" resultType="Dangliang">
+		select * from dangliang where code=#{code}
+	</select>
+	
+	<update id="updateByCode" parameterType="Dangliang">
+		update dangliang set value=#{value} where code=#{code}
+	</update>
+</mapper>

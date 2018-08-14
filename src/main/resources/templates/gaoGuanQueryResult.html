@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"></meta>
+<script src="/jquery-easyui-1.5.4.4/jquery.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/jquery.easyui.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/locale/easyui-lang-zh_CN.js"	type="text/javascript"></script>
+<script src="/js/global.js"></script>
+<link href="/jquery-easyui-1.5.4.4/themes/default/easyui.css"	rel="stylesheet" type="text/css" />
+<link href="/jquery-easyui-1.5.4.4/themes/icon.css" rel="stylesheet"	type="text/css" />
+<link href="/css/system.css" rel="stylesheet"	type="text/css" />
+<style>
+.head{height: 40px; background: RGB(30, 64, 128); padding: 15px 0px 10px 20px; line-height:26px;color:white;font-size:28px;font-weight: bold;}
+.panel-header, .panel-body{border-left:none;border-right:none}
+
+</style>
+<script th:inline="javascript">
+/*<![CDATA[*/
+var dutyId = [[${dutyId}]];
+$(function() {      
+    $('#datetime').datebox({    
+          onShowPanel : function() {// 显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层    
+              span.trigger('click'); // 触发click事件弹出月份层    
+              $(".datebox-button-a").first().hide();
+              if (!tds)    
+                  setTimeout(function() {// 延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔    
+                      tds = p.find('div.calendar-menu-month-inner td');    
+                      tds.click(function(e) {    
+                          e.stopPropagation(); // 禁止冒泡执行easyui给月份绑定的事件    
+                          var year = /\d{4}/.exec(span.html())[0]// 得到年份    
+                          , month = parseInt($(this).attr('abbr'), 10) + 1; // 月份    
+                          $('#datetime').datebox('hidePanel')// 隐藏日期对象    
+                          .datebox('setValue', year + '-' + month); // 设置日期的值    
+                          reloadYdKh();
+                      });    
+                  }, 0);    
+          },    
+          parser : function(s) {// 配置parser，返回选择的日期    
+              if (!s)    
+                  return new Date();    
+              var arr = s.split('-');    
+              return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);    
+          },    
+          formatter : function(d) {    
+              var month = d.getMonth();  
+              if(month<=10){  
+                  month = "0"+month;  
+              }  
+              if (d.getMonth() == 0) {    
+                  return d.getFullYear()-1 + '-' + 12;    
+              } else {    
+                  return d.getFullYear() + '-' + month;    
+              }    
+          }// 配置formatter，只返回年月    
+      });    
+      var p = $('#datetime').datebox('panel'), // 日期选择对象    
+      tds = false, // 日期选择对象中月份    
+      span = p.find('span.calendar-text'); // 显示月份层的触发控件    
+      
+  });
+function reloadYdKh()
+{
+	var mydate = $('#datetime').datebox('getValue');
+	mydate = mydate.replace("-", "");
+	var obj = new Object();
+	obj.dutyId = dutyId;
+	obj.yearMonth = mydate;
+	$.ajax({
+		url : "/getYdKhjg/",
+		type : 'post',
+		data:JSON.stringify(obj),
+		contentType: "application/json; charset=utf-8",
+		async:true,
+		success : function(data) {
+			if(data.code == "0000")
+			{
+				var obj = data.responseData.dataSet;
+				
+				$('#yueDuTable').datagrid('loadData', obj);
+			}
+			else
+			{alert(data.msg)}
+		}
+	});
+}
+$(document).ready(function() {
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth()+2;
+			month =(month<10 ? "0"+month:month);   
+			var mydate = year.toString()+"-"+month.toString();
+			$("#datetime").datebox('setValue', mydate);
+			$("#title").text("绩效查询-"+ [[${dutyName}]]);
+			reloadYdKh();
+		});
+/*]]>*/
+</script>
+</head>
+<body>
+	<h3 id="title"></h3>
+	<div class="easyui-tabs" style="width:100%">
+		<div title="月度考核" style="padding: 10px">
+			<div style="margin:10px 2px"><label for="datetime">月份：</label><input type="text" id="datetime" class="easyui-datebox"
+				data-options="today:false"></input></div>
+			<div style="width:1102px;border-left:solid 1px #95B8E7;border-right:solid 1px #95B8E7;">
+			<table class="easyui-datagrid show" id="yueDuTable" data-options="singleSelect:true">
+				<thead>
+					<tr>
+						<th data-options="field:'userName',width:120,align:'center'">姓名</th>
+						<th data-options="field:'score',width:120,align:'center'">考核得分</th>
+						<th data-options="field:'rank',width:120,align:'center'">考核排名</th>
+						<th data-options="field:'level',width:120,align:'center'">考核等级</th>
+					</tr>
+				</thead>
+			</table>
+			</div>
+		</div>
+<!-- 		<div title="年度考核" style="padding:10px"> -->
+<!-- 			<ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul> -->
+<!-- 		</div> -->
+	</div>
+	<br></br>
+	<a href="./data/example.xlsx" class="easyui-linkbutton" iconCls="icon-redo" style="margin-left:400px;">导  出</a>
+</body>
+</html>

@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"></meta>
+<script src="/jquery-easyui-1.5.4.4/jquery.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/jquery.easyui.min.js"	type="text/javascript"></script>
+<script src="/jquery-easyui-1.5.4.4/locale/easyui-lang-zh_CN.js"	type="text/javascript"></script>
+<script src="/js/global.js"></script>
+<link href="/jquery-easyui-1.5.4.4/themes/default/easyui.css"	rel="stylesheet" type="text/css" />
+<link href="/jquery-easyui-1.5.4.4/themes/icon.css" rel="stylesheet"	type="text/css" />
+<link href="/css/system.css" rel="stylesheet"	type="text/css" />
+<style>
+.head{height: 40px; background: RGB(30, 64, 128); padding: 15px 0px 10px 20px; line-height:26px;color:white;font-size:28px;font-weight: bold;}
+.panel-header, .panel-body{border-left:none;border-right:none}
+
+</style>
+<script th:inline="javascript">
+/*<![CDATA[*/
+	var isYuanJiao = [[${isYuanJiao}]];
+	var insName = [[${insName}]];
+	var layoutData = [[${layoutData}]];
+$(function() {      
+    $('#datetime').datebox({    
+          onShowPanel : function() {// 显示日趋选择对象后再触发弹出月份层的事件，初始化时没有生成月份层    
+              span.trigger('click'); // 触发click事件弹出月份层    
+              $(".datebox-button-a").first().hide();
+              if (!tds)    
+                  setTimeout(function() {// 延时触发获取月份对象，因为上面的事件触发和对象生成有时间间隔    
+                      tds = p.find('div.calendar-menu-month-inner td');    
+                      tds.click(function(e) {    
+                          e.stopPropagation(); // 禁止冒泡执行easyui给月份绑定的事件    
+                          var year = /\d{4}/.exec(span.html())[0]// 得到年份    
+                          , month = parseInt($(this).attr('abbr'), 10) + 1; // 月份    
+                          $('#datetime').datebox('hidePanel')// 隐藏日期对象    
+                          .datebox('setValue', year + '-' + month); // 设置日期的值    
+                      });    
+                  }, 0);    
+          },    
+          parser : function(s) {// 配置parser，返回选择的日期    
+              if (!s)    
+                  return new Date();    
+              var arr = s.split('-');    
+              return new Date(parseInt(arr[0], 10), parseInt(arr[1], 10) - 1, 1);    
+          },    
+          formatter : function(d) {    
+              var month = d.getMonth();  
+              if(month<=10){  
+                  month = "0"+month;  
+              }  
+              if (d.getMonth() == 0) {    
+                  return d.getFullYear()-1 + '-' + 12;    
+              } else {    
+                  return d.getFullYear() + '-' + month;    
+              }    
+          }// 配置formatter，只返回年月    
+      });    
+      var p = $('#datetime').datebox('panel'), // 日期选择对象    
+      tds = false, // 日期选择对象中月份    
+      span = p.find('span.calendar-text'); // 显示月份层的触发控件    
+      
+  });
+var editIndex = undefined;  
+function endEditing() {  
+    if (editIndex == undefined) { return true }  
+    if ($('#showTable').datagrid('validateRow', editIndex)) {  
+        var ed = $('#showTable').datagrid('getEditor', { index: editIndex, field: 'fenzhi' });  
+        $('#showTable').datagrid('endEdit', editIndex);  
+        editIndex = undefined;  
+        return true;  
+    } else {  
+        return false;  
+    }  
+}  
+function onClickCell(index, field){
+	if (editIndex != index) {
+			if (endEditing()) {
+				$('#showTable').datagrid('selectRow', index).datagrid('beginEdit', index);
+				//获取编辑行  
+				var editors = $('#showTable').datagrid('getEditors', index);
+				var sfgzEditor = editors[0];
+				//绑定失焦事件并取消可编辑状态  
+				sfgzEditor.target.bind('blur', function() {
+					$('#showTable').datagrid('selectRow', index).datagrid(
+							'endEdit', index);
+					editIndex = undefined;
+					//update();  
+				});
+				editIndex = index;
+			} else {
+				$('#showTable').datagrid('selectRow', editIndex);
+			}
+		}
+	}
+var tableData;
+var merges;
+$(document).ready(
+		function() {
+			$("#title").text("绩效考核-" + insName);
+			var getDataUrl = "/data/"+layoutData;
+			$.ajax({
+				url : getDataUrl,
+				type : 'get',
+				async : false,
+				success : function(data) {
+					tableData = data.data;
+					merges = data.merges;
+				}
+			});
+			var guideData = new Object();
+			guideData.total = 0;
+			guideData.rows = new Array();
+			for(var i=0; i<merges.length; i++)
+			{
+				var item = merges[i];
+				for(var j=0; j<item.rowspan; j++)
+				{
+					var row = new Object();
+					row.xiangmu = item.xiangmu;
+					guideData.rows.push(row);
+					guideData.total += 1;
+				}
+			}
+			$("#guide").datagrid({
+				data:guideData,
+				onLoadSuccess : function() {
+						for (var i = 0; i < merges.length; i++)
+							$('#guide').datagrid('mergeCells', {
+								index : merges[i].index,
+								field : 'xiangmu',
+								rowspan : merges[i].rowspan
+							});
+						$("table tr:gt(0)").each(
+								function() { // 遍历每一行
+									$(this).children("td:first").css(
+											"background-color",
+											"RGB(248,248,248)");
+									$(this).children("td:first")
+											.children()
+											.css("font-size", "14px");
+									$(this).children("td:first")
+											.children().css("color",
+													"blue");
+								});
+				},
+			});
+			$('#showTable').datagrid(
+					{
+						data : tableData,
+						onClickCell : onClickCell,
+						columns : [ [ {
+							field : 'zhibiao',
+							title : '指标',
+							width : 200,
+							align : 'center'
+						}, {
+							field : 'fenzhi',
+							title : '分值',
+							width : 100,
+							align : 'center',
+							editor : {
+								type : 'text',
+								options : {
+									valueField : 'fenzhi',
+									required : true
+								}
+							}
+						}, {
+							field : 'kaohedanwei',
+							title : '考核单位',
+							width : 200,
+							align : 'center'
+						} ] ],
+						onBeforeEdit : function(index, row) {
+							row.editing = true;
+							updateActions(index);
+						},
+						onAfterEdit : function(index, row) {
+							row.editing = false;
+							updateActions(index);
+						},
+						onCancelEdit : function(index, row) {
+							row.editing = false;
+							updateActions(index);
+						}
+					});
+		});
+function importXls()
+{
+	var data = 
+	alert(JSON.stringify(data));
+}
+function saveYD()
+{
+	var row = $('#yueDuTable').datagrid('getSelected');
+	var obj = new Object();
+	obj.insId = row.insId;
+	obj.insName = row.insName;
+	obj.yearMonth = $("#yd_date").datebox('getValue');
+	obj.yearMonth = obj.yearMonth.replace("-", "");
+	obj.details = $("#showTable").datagrid('getData');
+	obj.isYuanJiao = isYuanJiao;
+	var url = "/putJgKaoHe";
+	$.ajax({
+        type: "post",
+        url: url,
+        data: JSON.stringify(obj),
+        contentType: "application/json; charset=utf-8",
+        success: function(data){
+                    if(data.code == "0000")
+                   	{
+                    	alert("操作成功");
+                    	reloadYdKh();
+                   	}
+                    else
+                   	{
+                   		alert(data.msg);
+                   	}
+                    $('#yddlg').dialog('close');
+                    $("#edit_yd_score").textbox('setValue', "");
+                 }
+    });	
+}
+function updateActions(index) {
+	$('#showTable').datagrid('updateRow', {
+		index : index,
+		row : {}
+	});
+}
+/*]]>*/
+</script>
+</head>
+<body>
+	<h3 id="title"></h3>
+	<div class="easyui-tabs" style="width:100%">
+		<div title="月度考核" style="padding: 10px">
+			<div>
+				<div style="margin: 10px 2px;float:left">
+					<label for="datetime">月份：</label><input type="text" id="datetime"
+						class="easyui-datebox" data-options="today:false"></input>
+				</div>
+				<div style="margin: 10px 2px;float:left">
+					<a href="#" class="easyui-linkbutton" iconCls="icon-ok" style="margin-left:400px;" onclick="importXls()">导入Excel</a>
+				</div>
+				<div style="clear:both"></div>
+			</div>
+			<div style="width:1000px;border-left:solid 1px #95B8E7;border-right:solid 1px #95B8E7;">
+			<div style="width:200px;float:left">
+			<table class="easyui-datagrid" id="guide">
+				<thead>
+					<tr>
+						<th data-options="field:'xiangmu',width:198,align:'center'" >项目</th>
+					</tr>
+				</thead>
+			</table>
+			</div>
+			<div style="width:800px;float:left">
+			<table class="easyui-datagrid show" id="showTable" data-options="singleSelect:true" style="float:left">
+<!-- 				<thead> -->
+<!-- 					<tr> -->
+<!-- 						<th data-options="field:'xiangmu',width:200,align:'center'" >项目</th> -->
+<!-- 						<th data-options="field:'zhibiao',width:200,align:'center'" >指标</th> -->
+<!-- 						<th data-options="field:'fenzhi',width:200,align:'center'" >分值</th> -->
+<!-- 						<th data-options="field:'kaohedanwei',width:200,align:'center'" >考核单位</th> -->
+<!-- 					</tr> -->
+<!-- 				</thead> -->
+			</table>
+			</div>
+			<div style="clear:both"></div>
+			</div>
+		</div>
+		<div title="年度考核" style="padding:10px">
+			<ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
+		</div>
+	</div>
+	<br/>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-ok" style="margin-left:400px;">保  存</a>
+</body>
+</html>
